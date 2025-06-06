@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { Pool } = require('pg');
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -12,6 +13,13 @@ const shiftSwapRequestRoutes = require('./routes/shiftSwapRequestRoutes');
 dotenv.config();
 
 const app = express();
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, 
+  },
+});
 
 app.use(express.json()); // Enable JSON body parsing
 app.use(express.urlencoded({ extended: true })); // Enable form data parsing
@@ -34,6 +42,17 @@ app.use('/api/overtime', overtimeRoutes);
 
 // Shift swap request routes
 app.use('/api/shift-swap-requests', shiftSwapRequestRoutes);
+
+// Example query route
+app.get('/test-db', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Database error');
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 
