@@ -9,11 +9,7 @@ const userRoutes = require("./routes/userRoutes");
 const shiftmanagementRoutes = require("./routes/shiftmanagementRoutes");
 const overtimeRoutes = require('./routes/overtimeRoutes');
 const shiftSwapRequestRoutes = require('./routes/shiftSwapRequestRoutes');
-
-dotenv.config();
-
 const app = express();
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -21,14 +17,28 @@ const pool = new Pool({
   },
 });
 
+const allowedOrigins = [
+  'http://localhost:5173', // local dev
+  'https://frontend-main-73r1aulme-simbas-projects-6dbb6201.vercel.app' // production
+];
+
 app.use(express.json()); // Enable JSON body parsing
 app.use(express.urlencoded({ extended: true })); // Enable form data parsing
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 
 app.use(bodyParser.json());
