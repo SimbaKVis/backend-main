@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true })); // Enable form data parsing
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', //frontend url
+  origin: process.env.CLIENT_ORIGIN,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
