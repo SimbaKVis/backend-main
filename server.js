@@ -18,7 +18,6 @@ const pool = new Pool({
 });
 
 const allowedOrigins = [
-  'http://localhost:5173', // local dev
   'https://frontend-main-73r1aulme-simbas-projects-6dbb6201.vercel.app' // production
 ];
 
